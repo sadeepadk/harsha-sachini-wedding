@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H & S Wedding — Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@200;300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #faf6f8;
+    --bg2: #f0e5eb;
+    --white: #ffffff;
+    --gold: #a41e4e;
+    --gold-light: #d4547b;
+    --gold-dark: #6b1b3a;
+    --text: #3d1428;
+    --text2: #5a1e3a;
+    --text3: #a41e4e;
+    --success: #4caf7d;
+    --danger: #e05252;
+    --border: rgba(164, 30, 78, 0.25);
+    --sidebar-w: 220px;
+  }
+
+  body {
+    font-family: 'Josefin Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── SIDEBAR ── */
+  aside {
+    width: var(--sidebar-w);
+    background: #3d1428;
+    min-height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 0 24px;
+  }
+  .sidebar-logo {
+    text-align: center;
+    padding: 0 20px 28px;
+    border-bottom: 1px solid rgba(201,169,110,0.2);
+  }
+  .sidebar-logo .mono {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold);
+    letter-spacing: 4px;
+    display: block;
+  }
+  .sidebar-logo small {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(232,213,176,0.5);
+    display: block;
+    margin-top: 4px;
+  }
+  nav.sidebar-nav {
+    padding: 24px 0;
+    flex: 1;
+  }
+  .nav-section {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(201,169,110,0.4);
+    padding: 0 24px;
+    margin: 16px 0 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 24px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(232,213,176,0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover, .nav-item.active {
+    color: var(--gold-light);
+    background: rgba(201,169,110,0.08);
+    border-left-color: var(--gold);
+  }
+  .nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; flex-shrink: 0; }
+  .sidebar-footer {
+    padding: 20px 24px 0;
+    border-top: 1px solid rgba(201,169,110,0.15);
+    font-size: 10px;
+    color: rgba(201,169,110,0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── MAIN ── */
+  main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 36px 40px;
+    max-width: 1100px;
+  }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--text);
+  }
+  .page-sub {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* ── STAT CARDS ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+  }
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-num.gold { color: var(--gold-dark); }
+  .stat-num.green { color: var(--success); }
+  .stat-num.red { color: var(--danger); }
+  .stat-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+  /* ── SECTION CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text2);
+    font-weight: 400;
+  }
+  .card-body { padding: 0; }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    padding: 12px 18px;
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 400;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  td {
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(201,169,110,0.1);
+    color: var(--text2);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(250,247,242,0.8); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .badge-yes { background: rgba(76,175,125,0.12); color: var(--success); }
+  .badge-no { background: rgba(224,82,82,0.1); color: var(--danger); }
+
+  .btn-action {
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: none;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-action:hover { border-color: var(--gold); color: var(--gold-dark); }
+  .btn-action.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+  .btn-gold {
+    padding: 10px 20px;
+    background: var(--gold);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-gold:hover { background: var(--gold-dark); color: white; }
+
+  /* ── SETTINGS FORM ── */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 24px;
+  }
+  .settings-group { }
+  .settings-group label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 8px;
+  }
+  .settings-group input,
+  .settings-group textarea,
+  .settings-group select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .settings-group input:focus,
+  .settings-group textarea:focus { border-color: var(--gold); }
+  .settings-group textarea { resize: vertical; min-height: 80px; }
+  .settings-group.full { grid-column: 1 / -1; }
+  .settings-save {
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  /* ── SEARCH/FILTER ── */
+  .filter-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .filter-input {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    width: 220px;
+  }
+  .filter-input:focus { border-color: var(--gold); }
+  .filter-select {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text2);
+    background: var(--bg);
+    outline: none;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .empty-state p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text3);
+  }
+  .empty-state small {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text3);
+    opacity: 0.6;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(44,36,22,0.5);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--white);
+    border-radius: 4px;
+    max-width: 500px;
+    width: 90%;
+    padding: 32px;
+  }
+  .modal h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    margin-bottom: 16px;
+  }
+  .modal p { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 12px; }
+  .modal-footer { display: flex; gap: 12px; margin-top: 20px; }
+
+  /* ── EXPORT ── */
+  .export-bar {
+    display: flex;
+    gap: 10px;
+  }
+
+  /* ── GALLERY ADMIN ── */
+  .gallery-admin-cell {
+    position: relative;
+    border: 2px dashed var(--border);
+    border-radius: 4px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-admin-cell:hover { border-color: var(--gold); }
+  .gallery-admin-cell.filled { border-style: solid; border-color: transparent; }
+  .gallery-admin-cell img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .gallery-admin-cell input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .gallery-admin-placeholder {
+    text-align: center; pointer-events: none;
+  }
+  .gallery-admin-placeholder svg {
+    width: 32px; height: 32px; stroke: var(--text3); fill: none; stroke-width: 1.5; opacity: 0.5;
+  }
+  .gallery-admin-placeholder span {
+    display: block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text3); opacity: 0.5; margin-top: 8px;
+  }
+  .gallery-cell-actions {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(61,20,40,0.75);
+    display: flex; gap: 6px; justify-content: center; padding: 8px;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .gallery-admin-cell:hover .gallery-cell-actions { opacity: 1; }
+  .gallery-cell-del {
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: #fff; background: var(--danger); border: none; border-radius: 2px;
+    padding: 4px 10px; cursor: pointer; font-family: 'Josefin Sans', sans-serif;
+    pointer-events: all;
+  }
+  .gallery-slot-num {
+    position: absolute; top: 8px; left: 8px;
+    background: rgba(61,20,40,0.6); color: rgba(232,213,176,0.9);
+    font-size: 9px; letter-spacing: 2px; padding: 2px 7px; border-radius: 2px;
+  }
+
+  @media (max-width: 860px) {
+    aside { display: none; }
+    main { margin-left: 0; padding: 20px 16px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .settings-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside>
+  <div class="sidebar-logo">
+    <span class="mono">H & S</span>
+    <small>Admin Panel</small>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a class="nav-item active" onclick="showPage('dashboard')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" onclick="showPage('rsvps')">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      RSVP Responses
+    </a>
+    <div class="nav-section">Manage</div>
+    <a class="nav-item" onclick="showPage('settings')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Wedding Details
+    </a>
+    <a class="nav-item" onclick="showPage('couple')">
+      <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Couple Info
+    </a>
+    <a class="nav-item" onclick="showPage('timeline')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Timeline
+    </a>
+    <a class="nav-item" onclick="showPage('media')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
+      Media & Videos
+    </a>
+    <a class="nav-item" onclick="showPage('gallery')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Photo Gallery
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    Wedding Admin v1.0
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Harsha & Sachini · 14th February 2026</div>
+      </div>
+      <button class="btn-gold" onclick="refreshData()">↻ Refresh</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total RSVPs</div>
+        <div class="stat-num gold" id="stat-total">0</div>
+        <div class="stat-sub">Responses received</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Attending</div>
+        <div class="stat-num green" id="stat-yes">0</div>
+        <div class="stat-sub">Confirmed guests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Not Attending</div>
+        <div class="stat-num red" id="stat-no">0</div>
+        <div class="stat-sub">Declined</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Guests</div>
+        <div class="stat-num" id="stat-guests">0</div>
+        <div class="stat-sub">Expected head count</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Recent RSVPs</div>
+        <button class="btn-action" onclick="showPage('rsvps')">View All →</button>
+      </div>
+      <div class="card-body" id="recent-rsvp-list">
+        <div class="empty-state"><p>No RSVPs yet</p><br><small>Responses will appear here</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RSVP PAGE -->
+  <div class="page" id="page-rsvps">
+    <div class="page-header">
+      <div>
+        <div class="page-title">RSVP Responses</div>
+        <div class="page-sub" id="rsvp-count-sub">Loading...</div>
+      </div>
+      <div class="export-bar">
+        <button class="btn-action" onclick="exportCSV()">Export CSV</button>
+        <button class="btn-gold" onclick="clearAll()">Clear All</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="filter-bar">
+          <input class="filter-input" id="search-input" placeholder="Search by name..." oninput="renderTable()">
+          <select class="filter-select" id="filter-attend" onchange="renderTable()">
+            <option value="">All Responses</option>
+            <option value="yes">Attending</option>
+            <option value="no">Not Attending</option>
+          </select>
+        </div>
+      </div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Attending</th>
+              <th>Guests</th>
+              <th>Message</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="rsvp-tbody">
+            <tr><td colspan="8"><div class="empty-state"><p>No responses yet</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS PAGE -->
+  <div class="page" id="page-settings">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Wedding Details</div>
+        <div class="page-sub">Update event information</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Ceremony Details</div></div>
+      <div class="settings-grid">
+        <div class="settings-group">
+          <label>Event Name</label>
+          <input type="text" id="s-ceremony-name" value="Poruwa Ceremony">
+        </div>
+        <div class="settings-group">
+          <label>Date</label>
+          <input type="date" id="s-ceremony-date" value="2026-02-14">
+        </div>
+        <div class="settings-group">
+          <label>Time</label>
+          <input type="text" id="s-ceremony-time" value="4:00 PM">
+        </div>
+        <div class="settings-group">
+          <label>Venue Name</label>
+          <input type="text" id="s-ceremony-venue" value="Temple Trees Ballroom">
+        </div>
+        <div class="settings-group full">
+          <label>Venue Address</label>
+          <input type="text" id="s-ceremony-addr" value="Wijerama Mawatha, Colombo 07">
+        </div>
+        <div class="settings-group">
+          <label>Map Link</label>
+          <input type="text" id="s-ceremony-map" value="https://maps.google.com">
+        </div>
+        <div class="settings-group">
+          <label>Guest Seating Time</label>
+          <input type="text" id="s-ceremony-seat" value="3:30 PM">
+        </div>
+      </div>
+      <div class="settings-save">
+        <button class="btn-action">Cancel</button>
+        <button class="btn-gold" onclick="saveSettings('ceremony')">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Reception Details</div></div>
+      <div class="settings-grid">
+        <div class="settings-group">
+          <label>Date</label>
+          <input type="date" id="s-reception-date" value="2026-02-14">
+        </div>
+        <div class="settings-group">
+          <label>Start Time</label>
+          <input type="text" id="s-reception-time" value="6:30 PM">
+        </div>
+        <div class="settings-group">
+          <label>Venue Name</label>
+          <input type="text" id="s-reception-venue" value="Grand Ballroom, Hilton Colombo">
+        </div>
+        <div class="settings-group">
+          <label>Map Link</label>
+          <input type="text" id="s-reception-map" value="https://maps.google.com">
+        </div>
+        <div class="settings-group full">
+          <label>Venue Address</label>
+          <input type="text" id="s-reception-addr" value="2 Sir Chittampalam A Gardiner Mawatha">
+        </div>
+      </div>
+      <div class="settings-save">
+        <button class="btn-action">Cancel</button>
+        <button class="btn-gold" onclick="saveSettings('reception')">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">RSVP Settings</div></div>
+      <div class="settings-grid">
+        <div class="settings-group">
+          <label>RSVP Deadline</label>
+          <input type="date" id="s-rsvp-deadline" value="2026-01-25">
+        </div>
+        <div class="settings-group">
+          <label>Contact Name</label>
+          <input type="text" id="s-contact-name" value="Devshini">
+        </div>
+        <div class="settings-group">
+          <label>Contact Phone</label>
+          <input type="text" id="s-contact-phone" value="075 904 0313">
+        </div>
+        <div class="settings-group">
+          <label>Hashtag</label>
+          <input type="text" id="s-hashtag" value="#Kavindra&Nimesha2026">
+        </div>
+      </div>
+      <div class="settings-save">
+        <button class="btn-action">Cancel</button>
+        <button class="btn-gold" onclick="saveSettings('rsvp')">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COUPLE PAGE -->
+  <div class="page" id="page-couple">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Couple Information</div>
+        <div class="page-sub">Manage bride & groom details and upload photos</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Bride Details & Photo</div></div>
+      <div class="settings-grid">
+        <div class="settings-group full">
+          <label>Upload Bride's Photo</label>
+          <input type="file" id="bride-photo-upload" accept="image/*" style="padding:12px 14px; cursor:pointer;">
+          <small style="display:block; margin-top:8px; color:var(--text3); font-size:11px;">Max 5MB, Recommended: 400x500px square image</small>
+        </div>
+        <div class="settings-group">
+          <label>Bride's Name</label>
+          <input type="text" id="bride-name-input" value="Sachini">
+        </div>
+        <div class="settings-group">
+          <label>Father's Name</label>
+          <input type="text" id="bride-father-input" value="">
+        </div>
+        <div class="settings-group">
+          <label>Mother's Name</label>
+          <input type="text" id="bride-mother-input" value="">
+        </div>
+        <div class="settings-group full">
+          <label>Bio / Quote</label>
+          <textarea id="bride-bio-input">A beautiful soul with a heart full of love.</textarea>
+        </div>
+      </div>
+      <div class="settings-save">
+        <button class="btn-action" onclick="clearBridePhoto()" style="background:rgba(224,82,82,0.1); color:var(--danger);">Clear Photo</button>
+        <button class="btn-gold" onclick="uploadBridePhoto(); saveCoupleInfo('bride')">Save Changes</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Groom Details & Photo</div></div>
+      <div class="settings-grid">
+        <div class="settings-group full">
+          <label>Upload Groom's Photo</label>
+          <input type="file" id="groom-photo-upload" accept="image/*" style="padding:12px 14px; cursor:pointer;">
+          <small style="display:block; margin-top:8px; color:var(--text3); font-size:11px;">Max 5MB, Recommended: 400x500px square image</small>
+        </div>
+        <div class="settings-group">
+          <label>Groom's Name</label>
+          <input type="text" id="groom-name-input" value="Harsha">
+        </div>
+        <div class="settings-group">
+          <label>Father's Name</label>
+          <input type="text" id="groom-father-input" value="">
+        </div>
+        <div class="settings-group">
+          <label>Mother's Name</label>
+          <input type="text" id="groom-mother-input" value="">
+        </div>
+        <div class="settings-group full">
+          <label>Bio / Quote</label>
+          <textarea id="groom-bio-input">A wonderful soul blessed with kindness and strength.</textarea>
+        </div>
+      </div>
+      <div class="settings-save">
+        <button class="btn-action" onclick="clearGroomPhoto()" style="background:rgba(224,82,82,0.1); color:var(--danger);">Clear Photo</button>
+        <button class="btn-gold" onclick="uploadGroomPhoto(); saveCoupleInfo('groom')">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE PAGE -->
+  <div class="page" id="page-timeline">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Wedding Timeline</div>
+        <div class="page-sub">Manage the order of events</div>
+      </div>
+      <button class="btn-gold" onclick="addTimelineEvent()">+ Add Event</button>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Event Schedule</div></div>
+      <div id="timeline-list" class="card-body">
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Event</th><th>Action</th></tr>
+          </thead>
+          <tbody id="timeline-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIA PAGE -->
+  <div class="page" id="page-media">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Media & Videos</div>
+        <div class="page-sub">Upload background videos for hero section</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Upload Hero Background Video</div></div>
+      <div class="settings-grid">
+        <div class="settings-group full">
+          <label>Select Video File (Max 50MB)</label>
+          <input type="file" id="video-upload" accept="video/*" style="padding:12px 14px; cursor:pointer;">
+          <small style="display:block; margin-top:8px; color:var(--text3); font-size:11px;">
+            Supported: MP4, WebM, MOV (Recommended: MP4 1280x720 or higher, 30-60 seconds)
+          </small>
+        </div>
+      </div>
+      <div class="settings-save">
+        <button class="btn-gold" onclick="uploadVideo()">Upload Video</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Current Hero Videos</div></div>
+      <div class="card-body">
+        <table>
+          <thead>
+            <tr>
+              <th>Filename</th>
+              <th>Size</th>
+              <th>Uploaded</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="video-list">
+            <tr><td colspan="5"><div class="empty-state"><p>No videos uploaded</p><br><small>Upload a video to display here</small></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><div class="card-title">Storage Info</div></div>
+      <div style="padding:20px 24px;">
+        <p style="font-size:13px; color:var(--text2); line-height:1.8; margin-bottom:16px;">
+          <strong style="color:var(--text); display:block; margin-bottom:8px;">Browser Storage Limit:</strong>
+          Videos are stored in your browser's local storage. Maximum capacity is approximately 50MB total. Larger files may not be supported depending on your browser.
+        </p>
+        <p style="font-size:13px; color:var(--text2); line-height:1.8;">
+          <strong style="color:var(--text); display:block; margin-bottom:8px;">Best Practice:</strong>
+          For optimal performance, use compressed MP4 videos (1280x720 resolution, 30-60 seconds duration).
+        </p>
+        <div style="margin-top:20px; padding:14px 16px; background:var(--bg2); border-left:3px solid var(--gold); border-radius:2px;">
+          <span style="font-size:12px; color:var(--text3); letter-spacing:1px;">💾 Current Storage Used: <strong id="storage-used">0 MB</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY PAGE -->
+  <div class="page" id="page-gallery">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Photo Gallery</div>
+        <div class="page-sub">Add &amp; manage photos shown on the wedding site</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn-action" onclick="addGallerySlot()">+ Add Slot</button>
+        <button class="btn-gold" onclick="clearAllGallery()">Clear All</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Gallery Photos</div>
+        <span style="font-size:11px;color:var(--text3);letter-spacing:2px;" id="gallery-count-label">0 photos</span>
+      </div>
+      <div style="padding:24px;">
+        <div id="admin-gallery-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;"></div>
+        <div style="margin-top:20px;padding:16px;background:var(--bg2);border-left:3px solid var(--gold);border-radius:2px;">
+          <span style="font-size:12px;color:var(--text3);letter-spacing:1px;">
+            📸 Photos saved here will appear instantly on the wedding website gallery.
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>Delete RSVP?</h3>
+    <p>This will permanently remove this RSVP response. This action cannot be undone.</p>
+    <div class="modal-footer">
+      <button class="btn-action" onclick="closeModal()">Cancel</button>
+      <button class="btn-gold" style="background: var(--danger); color: white;" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed; bottom:24px; right:24px; background:#3d1428; color: #d4547b; padding: 12px 20px; border-radius:3px; font-size:12px; letter-spacing:2px; text-transform:uppercase; opacity:0; transition:opacity 0.3s; z-index:9999; border-left:3px solid #a41e4e;">
+  Saved successfully
+</div>
+
+<script>
+// ── DATA ──
+let rsvps = [];
+let deleteId = null;
+
+const defaultTimeline = [
+  { time: '3:30 PM', event: 'Guests Seated' },
+  { time: '4:00 PM', event: 'Poruwa Ceremony' },
+  { time: '5:30 PM', event: 'Cocktail Hour' },
+  { time: '6:30 PM', event: 'Grand Reception' },
+  { time: '7:30 PM', event: 'Dinner Service' },
+  { time: '11:00 PM', event: 'End of Evening' },
+];
+let timelineEvents = JSON.parse(localStorage.getItem('weddingTimeline') || JSON.stringify(defaultTimeline));
+
+// ── LOAD ──
+function loadData() {
+  rsvps = JSON.parse(localStorage.getItem('weddingRSVPs') || '[]');
+}
+
+function refreshData() {
+  loadData();
+  renderStats();
+  renderRecentRSVPs();
+  renderTable();
+  showToast('Data refreshed');
+}
+
+// ── STATS ──
+function renderStats() {
+  const total = rsvps.length;
+  const yes = rsvps.filter(r => r.attend === 'yes').length;
+  const no = rsvps.filter(r => r.attend === 'no').length;
+  const guests = rsvps.filter(r => r.attend === 'yes').reduce((s, r) => s + (r.guests || 1), 0);
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-yes').textContent = yes;
+  document.getElementById('stat-no').textContent = no;
+  document.getElementById('stat-guests').textContent = guests;
+  document.getElementById('rsvp-count-sub').textContent = `${total} response${total !== 1 ? 's' : ''} · ${yes} attending · ${guests} total guests`;
+}
+
+// ── RECENT ──
+function renderRecentRSVPs() {
+  const container = document.getElementById('recent-rsvp-list');
+  const recent = [...rsvps].reverse().slice(0, 5);
+  if (!recent.length) {
+    container.innerHTML = '<div class="empty-state"><p>No RSVPs yet</p><br><small>Responses will appear here</small></div>';
+    return;
+  }
+  container.innerHTML = `<table><thead><tr><th>Name</th><th>Attending</th><th>Guests</th><th>Submitted</th></tr></thead><tbody>
+    ${recent.map(r => `
+      <tr>
+        <td>${r.name}</td>
+        <td><span class="badge badge-${r.attend}">${r.attend === 'yes' ? 'Attending' : 'Declined'}</span></td>
+        <td>${r.attend === 'yes' ? r.guests : '—'}</td>
+        <td>${new Date(r.submittedAt).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}</td>
+      </tr>
+    `).join('')}
+  </tbody></table>`;
+}
+
+// ── TABLE ──
+function renderTable() {
+  const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+  const filter = document.getElementById('filter-attend')?.value || '';
+  let filtered = rsvps.filter(r => {
+    const matchSearch = r.name.toLowerCase().includes(search) || (r.phone || '').includes(search);
+    const matchFilter = !filter || r.attend === filter;
+    return matchSearch && matchFilter;
+  });
+
+  const tbody = document.getElementById('rsvp-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><p>No matching responses</p></div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => `
+    <tr>
+      <td style="color:var(--text3); font-size:12px;">${i+1}</td>
+      <td style="font-weight:400; color:var(--text);">${r.name}</td>
+      <td>${r.phone || '—'}</td>
+      <td><span class="badge badge-${r.attend}">${r.attend === 'yes' ? 'Attending' : 'Declined'}</span></td>
+      <td>${r.attend === 'yes' ? r.guests : '—'}</td>
+      <td style="max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${r.message || '—'}</td>
+      <td style="font-size:11px;">${new Date(r.submittedAt).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</td>
+      <td><button class="btn-action danger" onclick="deleteRSVP(${r.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+// ── DELETE ──
+function deleteRSVP(id) {
+  deleteId = id;
+  document.getElementById('delete-modal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('delete-modal').classList.remove('open');
+  deleteId = null;
+}
+function confirmDelete() {
+  rsvps = rsvps.filter(r => r.id !== deleteId);
+  localStorage.setItem('weddingRSVPs', JSON.stringify(rsvps));
+  closeModal();
+  renderStats();
+  renderRecentRSVPs();
+  renderTable();
+  showToast('RSVP deleted');
+}
+function clearAll() {
+  if (confirm('Delete ALL RSVP responses? This cannot be undone.')) {
+    localStorage.removeItem('weddingRSVPs');
+    rsvps = [];
+    renderStats();
+    renderRecentRSVPs();
+    renderTable();
+    showToast('All RSVPs cleared');
+  }
+}
+
+// ── EXPORT ──
+function exportCSV() {
+  if (!rsvps.length) { showToast('No data to export'); return; }
+  const header = ['Name','Phone','Attending','Guests','Message','Date'];
+  const rows = rsvps.map(r => [
+    r.name, r.phone || '', r.attend === 'yes' ? 'Yes' : 'No',
+    r.attend === 'yes' ? r.guests : 0,
+    (r.message || '').replace(/,/g,''),
+    new Date(r.submittedAt).toLocaleDateString('en-GB')
+  ]);
+  const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'KN_Wedding_RSVPs.csv';
+  a.click();
+  showToast('CSV exported');
+}
+
+// ── TIMELINE ──
+function renderTimeline() {
+  const tbody = document.getElementById('timeline-tbody');
+  tbody.innerHTML = timelineEvents.map((e, i) => `
+    <tr>
+      <td><input type="text" value="${e.time}" style="width:100px;" onchange="timelineEvents[${i}].time=this.value; saveTimeline()"></td>
+      <td><input type="text" value="${e.event}" style="width:260px;" onchange="timelineEvents[${i}].event=this.value; saveTimeline()"></td>
+      <td>
+        <button class="btn-action danger" onclick="removeTimelineEvent(${i})">Remove</button>
+      </td>
+    </tr>
+  `).join('');
+}
+function addTimelineEvent() {
+  timelineEvents.push({ time: '00:00 PM', event: 'New Event' });
+  saveTimeline();
+  renderTimeline();
+}
+function removeTimelineEvent(i) {
+  timelineEvents.splice(i, 1);
+  saveTimeline();
+  renderTimeline();
+}
+function saveTimeline() {
+  localStorage.setItem('weddingTimeline', JSON.stringify(timelineEvents));
+}
+
+// ── SETTINGS ──
+function saveSettings(section) {
+  const settings = JSON.parse(localStorage.getItem('weddingSettings') || '{}');
+  if (section === 'ceremony') {
+    settings.ceremony = {
+      name: document.getElementById('s-ceremony-name').value,
+      date: document.getElementById('s-ceremony-date').value,
+      time: document.getElementById('s-ceremony-time').value,
+      venue: document.getElementById('s-ceremony-venue').value,
+      address: document.getElementById('s-ceremony-addr').value,
+      map: document.getElementById('s-ceremony-map').value,
+      seating: document.getElementById('s-ceremony-seat').value
+    };
+  } else if (section === 'reception') {
+    settings.reception = {
+      date: document.getElementById('s-reception-date').value,
+      time: document.getElementById('s-reception-time').value,
+      venue: document.getElementById('s-reception-venue').value,
+      address: document.getElementById('s-reception-addr').value,
+      map: document.getElementById('s-reception-map').value
+    };
+  } else if (section === 'rsvp') {
+    settings.rsvp = {
+      deadline: document.getElementById('s-rsvp-deadline').value,
+      contact: document.getElementById('s-contact-name').value,
+      phone: document.getElementById('s-contact-phone').value,
+      hashtag: document.getElementById('s-hashtag').value
+    };
+  }
+  localStorage.setItem('weddingSettings', JSON.stringify(settings));
+  showToast(`${section} details saved ✓`);
+}
+
+// ── COUPLE PHOTOS ──
+function uploadBridePhoto() {
+  const fileInput = document.getElementById('bride-photo-upload');
+  const file = fileInput.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Photo too large! Maximum 5MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      localStorage.setItem('bridePhoto', e.target.result);
+      showToast('Bride photo uploaded ✓');
+      fileInput.value = '';
+    } catch (err) {
+      showToast('Storage limit exceeded');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadGroomPhoto() {
+  const fileInput = document.getElementById('groom-photo-upload');
+  const file = fileInput.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Photo too large! Maximum 5MB');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      localStorage.setItem('groomPhoto', e.target.result);
+      showToast('Groom photo uploaded ✓');
+      fileInput.value = '';
+    } catch (err) {
+      showToast('Storage limit exceeded');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearBridePhoto() {
+  if (confirm('Remove bride photo?')) {
+    localStorage.removeItem('bridePhoto');
+    document.getElementById('bride-photo-upload').value = '';
+    showToast('Bride photo removed');
+  }
+}
+
+function clearGroomPhoto() {
+  if (confirm('Remove groom photo?')) {
+    localStorage.removeItem('groomPhoto');
+    document.getElementById('groom-photo-upload').value = '';
+    showToast('Groom photo removed');
+  }
+}
+
+function saveCoupleInfo(person) {
+  const couple = JSON.parse(localStorage.getItem('coupleInfo') || '{}');
+  if (person === 'bride') {
+    couple.bride = {
+      name: document.getElementById('bride-name-input').value,
+      father: document.getElementById('bride-father-input').value,
+      mother: document.getElementById('bride-mother-input').value,
+      bio: document.getElementById('bride-bio-input').value
+    };
+  } else if (person === 'groom') {
+    couple.groom = {
+      name: document.getElementById('groom-name-input').value,
+      father: document.getElementById('groom-father-input').value,
+      mother: document.getElementById('groom-mother-input').value,
+      bio: document.getElementById('groom-bio-input').value
+    };
+  }
+  localStorage.setItem('coupleInfo', JSON.stringify(couple));
+}
+
+// ── NAV ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  
+  if (name === 'media') { renderVideoList(); updateStorageInfo(); }
+  if (name === 'couple') { loadCoupleInfo(); }
+  if (name === 'gallery') { 
+    galleryPhotos = JSON.parse(localStorage.getItem('galleryPhotos') || '{}');
+    const count = parseInt(localStorage.getItem('gallerySlotCount') || '3');
+    buildAdminGalleryWithCount(count);
+  }
+}
+
+function loadCoupleInfo() {
+  const couple = JSON.parse(localStorage.getItem('coupleInfo') || '{}');
+  if (couple.bride) {
+    document.getElementById('bride-name-input').value = couple.bride.name || 'Sachini';
+    document.getElementById('bride-father-input').value = couple.bride.father || '';
+    document.getElementById('bride-mother-input').value = couple.bride.mother || '';
+    document.getElementById('bride-bio-input').value = couple.bride.bio || '';
+  }
+  if (couple.groom) {
+    document.getElementById('groom-name-input').value = couple.groom.name || 'Harsha';
+    document.getElementById('groom-father-input').value = couple.groom.father || '';
+    document.getElementById('groom-mother-input').value = couple.groom.mother || '';
+    document.getElementById('groom-bio-input').value = couple.groom.bio || '';
+  }
+}
+
+// ── VIDEO UPLOAD ──
+function uploadVideo() {
+  const fileInput = document.getElementById('video-upload');
+  const file = fileInput.files[0];
+  
+  if (!file) {
+    showToast('Please select a video file');
+    return;
+  }
+  
+  const maxSize = 50 * 1024 * 1024; // 50MB
+  if (file.size > maxSize) {
+    showToast('File too large! Maximum 50MB');
+    return;
+  }
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const videos = JSON.parse(localStorage.getItem('weddingVideos') || '[]');
+      const videoData = {
+        id: Date.now(),
+        name: file.name,
+        size: file.size,
+        sizeText: formatFileSize(file.size),
+        uploadedAt: new Date().toLocaleString('en-GB'),
+        data: e.target.result
+      };
+      videos.push(videoData);
+      localStorage.setItem('weddingVideos', JSON.stringify(videos));
+      showToast('Video uploaded successfully! ✓');
+      fileInput.value = '';
+      renderVideoList();
+      updateStorageInfo();
+    } catch (err) {
+      showToast('Storage limit exceeded. Try a smaller file.');
+      console.log(err);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+function renderVideoList() {
+  const videos = JSON.parse(localStorage.getItem('weddingVideos') || '[]');
+  const tbody = document.getElementById('video-list');
+  
+  if (!videos.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state"><p>No videos uploaded</p><br><small>Upload a video to display here</small></div></td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = videos.map(v => `
+    <tr>
+      <td style="font-weight:400; color:var(--text);">${v.name}</td>
+      <td>${v.sizeText}</td>
+      <td style="font-size:11px;">${v.uploadedAt}</td>
+      <td><span class="badge badge-yes">Ready</span></td>
+      <td>
+        <button class="btn-action" onclick="setActiveVideo(${v.id})">Set Active</button>
+        <button class="btn-action danger" onclick="deleteVideo(${v.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setActiveVideo(id) {
+  const videos = JSON.parse(localStorage.getItem('weddingVideos') || '[]');
+  const video = videos.find(v => v.id === id);
+  
+  if (video) {
+    localStorage.setItem('activeHeroVideo', JSON.stringify({
+      id: video.id,
+      name: video.name,
+      data: video.data
+    }));
+    showToast('Video set as hero background!');
+    renderVideoList();
+  }
+}
+
+function deleteVideo(id) {
+  if (confirm('Delete this video?')) {
+    let videos = JSON.parse(localStorage.getItem('weddingVideos') || '[]');
+    videos = videos.filter(v => v.id !== id);
+    localStorage.setItem('weddingVideos', JSON.stringify(videos));
+
+    // If the deleted video was the active background video, remove it too
+    const active = JSON.parse(localStorage.getItem('activeHeroVideo') || 'null');
+    if (active && active.id === id) {
+      localStorage.removeItem('activeHeroVideo');
+      showToast('Video deleted & removed from background ✓');
+    } else {
+      showToast('Video deleted');
+    }
+
+    renderVideoList();
+    updateStorageInfo();
+  }
+}
+
+function updateStorageInfo() {
+  const videos = JSON.parse(localStorage.getItem('weddingVideos') || '[]');
+  let totalSize = 0;
+  videos.forEach(v => totalSize += v.size);
+  document.getElementById('storage-used').textContent = formatFileSize(totalSize);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+// ── GALLERY ──
+let galleryPhotos = JSON.parse(localStorage.getItem('galleryPhotos') || '{}');
+
+function compressImage(file, callback) {
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const MAX = 900;
+      let w = img.width, h = img.height;
+      if (w > h) { if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; } }
+      else { if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; } }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function getGallerySlotCount() {
+  return parseInt(localStorage.getItem('gallerySlotCount') || '3');
+}
+
+function buildAdminGallery() {
+  buildAdminGalleryWithCount(getGallerySlotCount());
+}
+
+function buildAdminGalleryWithCount(slots) {
+  const grid = document.getElementById('admin-gallery-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  let filled = 0;
+
+  for (let i = 0; i < slots; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'gallery-admin-cell' + (galleryPhotos[i] ? ' filled' : '');
+
+    const numLabel = document.createElement('div');
+    numLabel.className = 'gallery-slot-num';
+    numLabel.textContent = '#' + (i + 1);
+    cell.appendChild(numLabel);
+
+    if (galleryPhotos[i]) {
+      filled++;
+      const img = document.createElement('img');
+      img.src = galleryPhotos[i];
+      cell.appendChild(img);
+      const actions = document.createElement('div');
+      actions.className = 'gallery-cell-actions';
+      const delBtn = document.createElement('button');
+      delBtn.className = 'gallery-cell-del';
+      delBtn.textContent = 'Remove';
+      delBtn.onclick = (function(idx){ return function(e){ e.preventDefault(); e.stopPropagation(); removeGalleryPhoto(idx); }; })(i);
+      actions.appendChild(delBtn);
+      cell.appendChild(actions);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'gallery-admin-placeholder';
+      ph.innerHTML = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>Upload Photo</span>`;
+      cell.appendChild(ph);
+    }
+
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = 'image/*';
+    (function(idx, slotCount) {
+      inp.addEventListener('change', function(e) {
+        const file = e.target.files[0]; if (!file) return;
+        if (file.size > 10 * 1024 * 1024) { showToast('File too large! Max 10MB'); return; }
+        showToast('Compressing photo...');
+        compressImage(file, function(compressed) {
+          galleryPhotos[idx] = compressed;
+          try {
+            localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos));
+            showToast('Photo #' + (idx+1) + ' saved ✓');
+            buildAdminGalleryWithCount(slotCount);
+          } catch(err) {
+            delete galleryPhotos[idx];
+            showToast('Storage full! Try removing other photos first.');
+          }
+        });
+      });
+    })(i, slots);
+
+    cell.appendChild(inp);
+    grid.appendChild(cell);
+  }
+  document.getElementById('gallery-count-label').textContent = filled + ' / ' + slots + ' photos';
+}
+
+function removeGalleryPhoto(i) {
+  if (confirm('Remove photo #' + (i+1) + '?')) {
+    delete galleryPhotos[i];
+    localStorage.setItem('galleryPhotos', JSON.stringify(galleryPhotos));
+    showToast('Photo removed');
+    buildAdminGallery();
+  }
+}
+
+function addGallerySlot() {
+  const current = getGallerySlotCount();
+  const newCount = current + 1;
+  localStorage.setItem('gallerySlotCount', newCount);
+  showToast('Slot #' + newCount + ' added');
+  buildAdminGalleryWithCount(newCount);
+}
+
+function clearAllGallery() {
+  if (confirm('Remove ALL gallery photos? This cannot be undone.')) {
+    galleryPhotos = {};
+    localStorage.removeItem('galleryPhotos');
+    localStorage.setItem('gallerySlotCount', '3');
+    showToast('All gallery photos cleared');
+    buildAdminGallery();
+  }
+}
+
+// ── INIT ──
+loadData();
+renderStats();
+renderRecentRSVPs();
+renderTable();
+renderTimeline();
+
+// Auto-refresh every 30s
+setInterval(() => { loadData(); renderStats(); renderRecentRSVPs(); renderTable(); }, 30000);
+</script>
+
+</body>
+</html>
