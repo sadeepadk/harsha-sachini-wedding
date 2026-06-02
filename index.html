@@ -2071,6 +2071,7 @@ request the honour of your presence at their wedding
         <div class="event-name">Poruwa Ceremony</div>
         <div class="event-info">
           <strong>Monday, 20th July 2026</strong>
+          Guests seated at 09:00 AM<br>
           Ceremony at 10:00 AM<br><br>
           <strong>Grand Royal</strong>
           Pinnalanda, Pinnawala
@@ -2696,8 +2697,12 @@ request the honour of your presence at their wedding
     }
 
     /* ── GALLERY ── */
-    const TOTAL = parseInt(localStorage.getItem('gallerySlotCount') || '3');
-    let photos = JSON.parse(localStorage.getItem('galleryPhotos') || '{}');
+    const TOTAL = 3;
+    const photos = {
+      0: 'https://res.cloudinary.com/dgfgjfsci/image/upload/v1780334686/l22f9afxmbi12w61cbmn.jpg',
+      1: 'https://res.cloudinary.com/dgfgjfsci/image/upload/v1780369344/IMG_7938.JPG_ombsv2.jpg',
+      2: 'https://res.cloudinary.com/dgfgjfsci/image/upload/v1780369344/IMG_7939.JPG_rsvaf3.jpg'
+    };
 
     function buildGallery() {
       const grid = document.getElementById('gallery-grid');
