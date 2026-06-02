@@ -1468,7 +1468,6 @@
       pointer-events: none;
     }
 
-    /* floating petals behind envelope */
     .fs-petal {
       position: absolute;
       pointer-events: none;
@@ -1477,261 +1476,255 @@
     }
 
     @keyframes fsPetalFall {
-      0% {
-        transform: translateY(-20px) rotate(0deg);
-        opacity: 0
-      }
-
-      10% {
-        opacity: 1
-      }
-
-      90% {
-        opacity: 0.5
-      }
-
-      100% {
-        transform: translateY(110vh) rotate(540deg) translateX(50px);
-        opacity: 0
-      }
+      0% { transform: translateY(-20px) rotate(0deg); opacity: 0 }
+      10% { opacity: 1 }
+      90% { opacity: 0.5 }
+      100% { transform: translateY(110vh) rotate(540deg) translateX(50px); opacity: 0 }
     }
 
-    /* ── ENVELOPE WRAPPER ── */
-    .env-wrap {
+    /* ── BOOK WRAPPER ── */
+    .book-wrap {
       position: relative;
-      width: min(380px, 88vw);
+      width: min(320px, 80vw);
       cursor: pointer;
-      animation: envFloat 3s ease-in-out infinite;
+      perspective: 1200px;
+      animation: bookFloat 3s ease-in-out infinite;
     }
 
-    @keyframes envFloat {
-
-      0%,
-      100% {
-        transform: translateY(0)
-      }
-
-      50% {
-        transform: translateY(-10px)
-      }
+    @keyframes bookFloat {
+      0%, 100% { transform: translateY(0) }
+      50% { transform: translateY(-10px) }
     }
 
-    .env-wrap.opening {
-      animation: none;
-    }
+    .book-wrap.opening { animation: none; }
 
-    /* ── ENVELOPE BODY ── */
-    .env-body {
+    /* book scene (3D stage) */
+    .book-scene {
       width: 100%;
-      padding-top: 62%;
-      /* aspect ratio */
+      aspect-ratio: 3/4;
       position: relative;
-      border-radius: 4px 4px 8px 8px;
-      background: linear-gradient(170deg, #f5e8ed, #eedde6);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.3);
+      transform-style: preserve-3d;
     }
 
-    /* bottom half of envelope body */
-    .env-bottom {
+    /* back cover */
+    .book-back {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to bottom, #f0dde6 0%, #e8d0db 100%);
-      border-radius: 4px 4px 8px 8px;
-      overflow: hidden;
+      background: linear-gradient(160deg, #7b1f3a, #3d1428);
+      border-radius: 4px 12px 12px 4px;
+      box-shadow: -6px 8px 30px rgba(0,0,0,0.6);
     }
 
-    /* side triangles */
-    .env-bottom::before,
-    .env-bottom::after {
-      content: '';
+    /* spine */
+    .book-spine {
       position: absolute;
-      bottom: 0;
-      width: 0;
-      height: 0;
-      border-style: solid;
+      left: -18px;
+      top: 2px;
+      bottom: 2px;
+      width: 18px;
+      background: linear-gradient(90deg, #2a0f1c, #5d1028);
+      border-radius: 4px 0 0 4px;
+      box-shadow: -4px 4px 12px rgba(0,0,0,0.5);
     }
 
-    .env-bottom::before {
-      left: 0;
-      border-width: 0 0 120px 120px;
-      border-color: transparent transparent #ddc8d4 transparent;
-      filter: brightness(0.92);
-    }
-
-    .env-bottom::after {
-      right: 0;
-      border-width: 0 120px 120px 0;
-      border-color: transparent #ddc8d4 transparent transparent;
-      filter: brightness(0.92);
-    }
-
-    /* wax seal */
-    .env-seal {
+    /* pages stack */
+    .book-pages {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 54px;
-      height: 54px;
-      background: radial-gradient(circle at 35% 35%, #a41e4e, #5d1028);
-      border-radius: 50%;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4), inset 0 1px 3px rgba(255, 255, 255, 0.2);
+      inset: 4px 6px 4px 4px;
+      background: repeating-linear-gradient(
+        to right,
+        #f5ede8 0px, #f5ede8 2px,
+        #e8dcd6 2px, #e8dcd6 3px
+      );
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* front cover — this flips open */
+    .book-cover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, #a41e4e 0%, #6b1235 60%, #3d1020 100%);
+      border-radius: 4px 12px 12px 4px;
+      box-shadow: 4px 6px 24px rgba(0,0,0,0.5);
+      transform-origin: left center;
+      transform: rotateY(0deg);
+      transition: transform 1.4s cubic-bezier(.4, 0, .2, 1);
+      transform-style: preserve-3d;
+      z-index: 10;
+    }
+
+    .book-wrap.open .book-cover {
+      transform: rotateY(-155deg);
+    }
+
+    /* cover decoration */
+    .book-cover-inner {
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(255,220,235,0.25);
+      border-radius: 2px 8px 8px 2px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 10px;
+      backface-visibility: hidden;
+    }
+
+    .book-cover-ornament {
+      font-size: clamp(28px, 8vw, 42px);
+      color: rgba(255,210,225,0.8);
       font-family: 'Playfair Display', serif;
-      font-size: 20px;
       font-style: italic;
-      color: rgba(255, 220, 235, 0.9);
-      letter-spacing: -1px;
-      z-index: 5;
-      transition: transform 0.4s ease, opacity 0.4s ease;
-      animation: sealPulse 2s ease-in-out infinite;
+      line-height: 1;
     }
 
-    @keyframes sealPulse {
-
-      0%,
-      100% {
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4), 0 0 0 0 rgba(164, 30, 78, 0.4)
-      }
-
-      50% {
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4), 0 0 0 10px rgba(164, 30, 78, 0)
-      }
+    .book-cover-line {
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,210,225,0.6), transparent);
     }
 
-    .env-wrap.opening .env-seal {
-      transform: translate(-50%, -50%) scale(0.7);
-      opacity: 0;
-    }
-
-    /* ── ENVELOPE FLAP (top triangle, folds open) ── */
-    .env-flap {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 0;
-      border-left: calc(min(380px, 88vw)/2) solid transparent;
-      border-right: calc(min(380px, 88vw)/2) solid transparent;
-      border-top: calc(min(380px, 88vw)*0.52) solid #e8d4dc;
-      transform-origin: top center;
-      transform: rotateX(0deg);
-      transition: transform 1.1s cubic-bezier(.4, 0, .2, 1);
-      z-index: 10;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-    }
-
-    .env-flap::after {
-      content: '';
-      position: absolute;
-      top: calc(min(380px, 88vw)*-0.52 + 2px);
-      left: calc(-1 * min(380px, 88vw)/2);
-      width: 0;
-      height: 0;
-      border-left: calc(min(380px, 88vw)/2) solid transparent;
-      border-right: calc(min(380px, 88vw)/2) solid transparent;
-      border-top: calc(min(380px, 88vw)*0.52 - 2px) solid #f2e2e9;
-    }
-
-    .env-wrap.open .env-flap {
-      transform: rotateX(180deg);
-    }
-
-    /* ── CARD INSIDE ── */
-    .env-card {
-      position: absolute;
-      left: 8%;
-      right: 8%;
-      bottom: 6%;
-      background: linear-gradient(160deg, #fff 0%, #fdf4f7 100%);
-      border-radius: 4px;
-      padding: 28px 20px 22px;
+    .book-cover-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(13px, 3.5vw, 17px);
+      font-weight: 400;
+      color: rgba(255,220,235,0.9);
+      letter-spacing: 3px;
       text-align: center;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
-      transform: translateY(0);
-      transition: transform 1.2s cubic-bezier(.22, 1, .36, 1);
-      z-index: 4;
+      text-transform: uppercase;
     }
 
-    .env-wrap.open .env-card {
-      transform: translateY(-68%);
+    .book-cover-names {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(18px, 5vw, 26px);
+      font-weight: 300;
+      color: #ffd6e5;
+      text-align: center;
+      line-height: 1.3;
     }
 
-    .env-card-tag {
+    .book-cover-amp {
+      font-style: italic;
+      color: #ffb3cc;
+      font-size: 0.85em;
+      display: block;
+    }
+
+    .book-cover-date {
+      font-size: clamp(8px, 2vw, 10px);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255,200,220,0.6);
+    }
+
+    /* inside right page (revealed after open) */
+    .book-inside {
+      position: absolute;
+      inset: 4px 6px 4px 4px;
+      background: linear-gradient(160deg, #fff 0%, #fdf4f7 100%);
+      border-radius: 0 8px 8px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.6s 0.8s ease;
+      padding: 20px;
+    }
+
+    .book-wrap.open .book-inside { opacity: 1; }
+
+    .book-inside-tag {
       font-size: 8px;
       letter-spacing: 5px;
       text-transform: uppercase;
       color: #a41e4e;
-      margin-bottom: 10px;
-      display: block;
     }
 
-    .env-card-names {
+    .book-inside-names {
       font-family: 'Playfair Display', serif;
+      font-size: clamp(15px, 4vw, 20px);
       font-weight: 300;
       color: #3d1428;
-      font-size: clamp(18px, 5vw, 26px);
-      line-height: 1.3;
+      text-align: center;
+      line-height: 1.4;
     }
 
-    .env-card-amp {
+    .book-inside-amp {
       font-style: italic;
       color: #a41e4e;
-      font-size: clamp(14px, 4vw, 20px);
+      font-size: 0.85em;
       display: block;
     }
 
-    .env-card-line {
-      width: 40px;
+    .book-inside-line {
+      width: 36px;
       height: 1px;
       background: linear-gradient(90deg, transparent, #a41e4e, transparent);
-      margin: 10px auto 8px;
     }
 
-    .env-card-date {
-      font-size: 9px;
+    .book-inside-date {
+      font-size: 8px;
       letter-spacing: 3px;
       text-transform: uppercase;
       color: #7b4647;
     }
 
-    /* ── HINT TEXT BELOW ── */
+    /* seal on cover */
+    .book-seal {
+      position: absolute;
+      right: 20px;
+      bottom: 20px;
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle at 35% 35%, #ffd6e5, #c94070);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-style: italic;
+      color: #3d1020;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      animation: sealPulse 2s ease-in-out infinite;
+      transition: opacity 0.4s ease;
+    }
+
+    .book-wrap.open .book-seal { opacity: 0; }
+
+    @keyframes sealPulse {
+      0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 0 rgba(164,30,78,0.4) }
+      50% { box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 8px rgba(164,30,78,0) }
+    }
+
+    /* hint & enter button */
     .env-hint {
       margin-top: 32px;
       font-size: 11px;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.45);
+      color: rgba(255,255,255,0.45);
       animation: hintBounce 1.8s ease-in-out infinite;
     }
 
     @keyframes hintBounce {
-
-      0%,
-      100% {
-        opacity: 0.45;
-        transform: translateY(0)
-      }
-
-      50% {
-        opacity: 0.8;
-        transform: translateY(-4px)
-      }
+      0%, 100% { opacity: 0.45; transform: translateY(0) }
+      50% { opacity: 0.8; transform: translateY(-4px) }
     }
 
-    /* ── AFTER OPEN: enter button ── */
     .env-enter {
       margin-top: 28px;
       font-size: 11px;
       letter-spacing: 5px;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.35);
       padding: 12px 36px;
       border-radius: 40px;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.08);
       cursor: pointer;
       opacity: 0;
       transition: all 0.3s;
@@ -1743,32 +1736,20 @@
     }
 
     .env-enter:hover {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255,255,255,0.18);
       color: #fff;
-      border-color: rgba(255, 255, 255, 0.6);
+      border-color: rgba(255,255,255,0.6);
       transform: translateY(-2px);
     }
 
     @keyframes envEnterShow {
-      from {
-        opacity: 0;
-        transform: translateY(10px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
+      from { opacity: 0; transform: translateY(10px) }
+      to { opacity: 1; transform: translateY(0) }
     }
 
     @keyframes fsFade {
-      from {
-        opacity: 0
-      }
-
-      to {
-        opacity: 1
-      }
+      from { opacity: 0 }
+      to { opacity: 1 }
     }
 
     #rose-layer {
@@ -1887,28 +1868,39 @@
 
 <body>
 
-  <!-- ══ ENVELOPE FLASH SCREEN ══ -->
+  <!-- ══ BOOK FLASH SCREEN ══ -->
   <div id="flash-screen">
-    <!-- floating petals spawned by JS -->
 
-    <div class="env-wrap" id="env-wrap" onclick="openEnvelope()">
-      <div class="env-body">
-        <div class="env-bottom"></div>
-        <!-- invitation card inside -->
-        <div class="env-card">
-          <span class="env-card-tag">Wedding Invitation</span>
-          <div class="env-card-names">
+    <div class="book-wrap" id="env-wrap" onclick="openEnvelope()">
+      <div class="book-scene">
+        <div class="book-back"></div>
+        <div class="book-spine"></div>
+        <div class="book-pages"></div>
+        <div class="book-inside">
+          <span class="book-inside-tag">Wedding Invitation</span>
+          <div class="book-inside-names">
             Harsha
-            <span class="env-card-amp">&amp;</span>
+            <span class="book-inside-amp">&amp;</span>
             Sachini
           </div>
-          <div class="env-card-line"></div>
-          <div class="env-card-date">Monday · 20th July 2026</div>
+          <div class="book-inside-line"></div>
+          <div class="book-inside-date">Monday · 20th July 2026</div>
         </div>
-        <!-- wax seal -->
-        <div class="env-seal">H&amp;S</div>
-        <!-- flap on top -->
-        <div class="env-flap" id="env-flap"></div>
+        <div class="book-cover" id="book-cover">
+          <div class="book-cover-inner">
+            <div class="book-cover-ornament">H &amp; S</div>
+            <div class="book-cover-line"></div>
+            <div class="book-cover-title">Wedding Invitation</div>
+            <div class="book-cover-names">
+              Harsha
+              <span class="book-cover-amp">&amp;</span>
+              Sachini
+            </div>
+            <div class="book-cover-line"></div>
+            <div class="book-cover-date">20th July 2026</div>
+          </div>
+          <div class="book-seal">H&amp;S</div>
+        </div>
       </div>
     </div>
 
@@ -2071,6 +2063,7 @@ request the honour of your presence at their wedding
         <div class="event-name">Poruwa Ceremony</div>
         <div class="event-info">
           <strong>Monday, 20th July 2026</strong>
+          Guests seated at 09:00 AM<br>
           Ceremony at 10:00 AM<br><br>
           <strong>Grand Royal</strong>
           Pinnalanda, Pinnawala
@@ -2480,40 +2473,28 @@ request the honour of your presence at their wedding
         }
       }
 
-      // Load bride photo
-      const bridePhoto = localStorage.getItem('bridePhoto');
-      if (bridePhoto) {
-        document.getElementById('bride-photo').style.backgroundImage = `url('${bridePhoto}')`;
-        document.getElementById('bride-photo').innerHTML = '';
-      }
+      // Load bride photo (hardcoded)
+      const bridePhoto = localStorage.getItem('bridePhoto') || 'https://res.cloudinary.com/dgfgjfsci/image/upload/v1780334221/pxygjjov7cf7xhu4hhd8.png';
+      document.getElementById('bride-photo').style.backgroundImage = `url('${bridePhoto}')`;
+      document.getElementById('bride-photo').innerHTML = '';
 
-      // Load groom photo
-      const groomPhoto = localStorage.getItem('groomPhoto');
-      if (groomPhoto) {
-        document.getElementById('groom-photo').style.backgroundImage = `url('${groomPhoto}')`;
-        document.getElementById('groom-photo').innerHTML = '';
-      }
+      // Load groom photo (hardcoded)
+      const groomPhoto = localStorage.getItem('groomPhoto') || 'https://res.cloudinary.com/dgfgjfsci/image/upload/v1780331545/gohbm3wndz1fwo1ahkxk.png';
+      document.getElementById('groom-photo').style.backgroundImage = `url('${groomPhoto}')`;
+      document.getElementById('groom-photo').innerHTML = '';
     })();
 
 
 
-    /* ══ ENVELOPE FLASH SCREEN JS ══ */
+    /* ══ BOOK FLASH SCREEN JS ══ */
     (function () {
-      // Spawn floating petals
       const fs = document.getElementById('flash-screen');
       const colors = ['rgba(212,84,123,0.35)', 'rgba(255,200,220,0.25)', 'rgba(164,30,78,0.3)', 'rgba(255,240,245,0.2)'];
       for (let i = 0; i < 22; i++) {
         const p = document.createElement('div');
         p.className = 'fs-petal';
         const size = 5 + Math.random() * 12;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        p.style.cssText = `
-      width:${size}px;height:${size}px;
-      left:${Math.random() * 100}vw;
-      background:${color};
-      animation-duration:${8 + Math.random() * 10}s;
-      animation-delay:${Math.random() * 6}s;
-    `;
+        p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}vw;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${8+Math.random()*10}s;animation-delay:${Math.random()*6}s;`;
         fs.appendChild(p);
       }
     })();
@@ -2523,24 +2504,13 @@ request the honour of your presence at their wedding
     function openEnvelope() {
       if (envelopeOpened) return;
       envelopeOpened = true;
-
       const wrap = document.getElementById('env-wrap');
       const hint = document.getElementById('env-hint');
       const enterBtn = document.getElementById('env-enter');
-
-      // stop floating animation
       wrap.classList.add('opening');
       hint.style.display = 'none';
-
-      // slight delay then open flap
-      setTimeout(() => {
-        wrap.classList.add('open');
-      }, 100);
-
-      // show enter button after card slides up
-      setTimeout(() => {
-        enterBtn.classList.add('show');
-      }, 1600);
+      setTimeout(() => { wrap.classList.add('open'); }, 100);
+      setTimeout(() => { enterBtn.classList.add('show'); }, 1800);
     }
 
     function enterSite() {
@@ -2549,12 +2519,11 @@ request the honour of your presence at their wedding
       setTimeout(() => { fs.style.display = 'none'; }, 1200);
     }
 
-    // Auto open after 2.5s, auto enter after 6s
     setTimeout(openEnvelope, 2500);
     setTimeout(() => {
       const fs = document.getElementById('flash-screen');
       if (fs && !fs.classList.contains('hide')) enterSite();
-    }, 7000);
+    }, 8000);
 
     /* ── PETALS ── */
     (function () {
